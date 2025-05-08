@@ -17,8 +17,6 @@ function Home() {
   const panelRef = useRef(null)
   const vehicleFoundRef = useRef(null)
   const waitingForDriverRef = useRef(null)
-
-
   const panelCloseRef = useRef(null)
   const [vehiclePanel, setVehiclePanel] = useState(false)
   const [confirmRidePanel, setConfirmRidePanel] = useState(false)
@@ -79,7 +77,7 @@ function Home() {
     <div className="h-screen relative overflow-hidden">
       <img className="w-16 absolute left-5 top-5" src="" alt="" />
       <div className="h-screen w-screen">
-        <img className="h-full w-full obj" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjj8P47W62yWuQCyBWQknptGadrlz0pWvOJg&s" alt="" />
+        <img className="h-full w-full obj" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjj8P47W62yWuQCyBWQknptGadrlz0pWvOJg&s" alt="map img" />
       </div>
 
       <div className="flex flex-col justify-end h-screen absolute top-0 w-full">
