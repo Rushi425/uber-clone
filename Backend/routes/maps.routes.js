@@ -4,8 +4,7 @@ const authMiddleware = require('../middlewares/auth.middleware');
 const mapController  = require('../controllers/maps.controller');
 const { query } = require('express-validator');
 
-router.get(
-  '/get-coordinates',
+router.get('/get-coordinates',
   query('address').notEmpty().withMessage('Address is required'),
   authMiddleware.authUser,
   mapController.getCoordinates

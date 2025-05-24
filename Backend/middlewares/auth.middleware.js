@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const blacklistModel = require('../models/blacklistToken.model');
 const captainModel = require('../models/captain.model');
 
-//check weather user authenticate or not using middleware for userprofile
+//check weather user authenticate or not using middleware 
 module.exports.authUser = async (req, res, next) => {
     const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
     if(!token) return res.status(401).json({error: "Access denied"});
@@ -21,7 +21,7 @@ module.exports.authUser = async (req, res, next) => {
     }
 }
 
-//check weather captain authenticate or not using middleware for captain profile
+//check weather captain authenticate or not using middleware
 module.exports.authCaptain = async (req, res, next) => {
     const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
 
