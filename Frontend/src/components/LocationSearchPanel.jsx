@@ -1,48 +1,31 @@
 import React from 'react'
 
-const LocationSearchPanel = ({ setVehiclePanel, setPanelOpen }) => {
-  // Sample array for location
-  const locations = [
-    '24 B near cappors1 catfe, SHeriyans coding, Bhopal1',
-    '25 B near cappors2 catfe, SHeriyans coding, Bhopal2',
-    '26 B near cappors3 catfe, SHeriyans coding, Bhopal3',
-    '27 B near cappors4 catfe, SHeriyans coding, Bhopal4',
-  ]
+const LocationSearchPanel = ({ suggestions, setVehiclePanel, setPanelOpen, setPickup, setDestination, activeField }) => {
+  
+  const handleSuggestions = (suggestions) =>{
+    if(activeField === 'pickup'){
+      setPickup(suggestions);
+    }
+    else if(activeField === 'destination'){
+      setDestination(suggestions);
+    }
+    //setVehiclePanel(true);
+    // setPanelOpen(false);
+  }
 
   return (
     <div>
-      {locations.map((elem, index) => (
-        <div
-          key={index}
-          onClick={() => {
-            setVehiclePanel(true);
-            setPanelOpen(false);
-          }}
-          className="flex gap-4 my-4 border-white active:border-black border-2 p-2 rounded-xl items-center justify-start"
-        >
-          <h2 className="bg-[#eee] h-8 w-12 flex items-center justify-center rounded-full">
-            <i className="ri-map-pin-fill"></i>
-          </h2>
-          <h4 className="font-medium">{elem}</h4>
-        </div>
-
-        
-      ))}
-       {/* <div className='flex gap-4 my-4 border-white active:border-black border-2 p-2 rounded-xl  items-center justify-start'>
-        <h2 className='bg-[#eee] h-8 w-12 flex items-center justify-center rounded-full' ><i className="ri-map-pin-fill"></i></h2>
-        <h4 className='font-medium' >24 B near cappors catfe, SHeriyans coding, Bhopal</h4>
-      </div>
-      <div className='flex gap-4 my-4 border-white active:border-black border-2 p-2 rounded-xl  items-center justify-start'>
-        <h2 className='bg-[#eee] h-8 w-12 flex items-center justify-center rounded-full' ><i className="ri-map-pin-fill"></i></h2>
-        <h4 className='font-medium' >24 B near cappors catfe, SHeriyans coding, Bhopal</h4>
-      </div><div className='flex gap-4 border-white active:border-black border-2 p-2 rounded-xl  my-4 items-center justify-start'>
-        <h2 className='bg-[#eee] h-8 w-12 flex items-center justify-center rounded-full' ><i className="ri-map-pin-fill"></i></h2>
-        <h4 className='font-medium' >24 B near cappors catfe, SHeriyans coding, Bhopal</h4>
-      </div><div className='flex  gap-4 border-white active:border-black border-2 p-2 rounded-xl  my-4 items-center justify-start'>
-        <h2 className='bg-[#eee] h-8 w-12 flex items-center justify-center rounded-full' ><i className="ri-map-pin-fill"></i></h2>
-        <h4 className='font-medium' >24 B near cappors catfe, SHeriyans coding, Bhopal</h4>
-      </div> */}
+      {/* Dispaly the suggestions as a list */}
+      {
+        suggestions.map((elem, idx) =>{
+          <div key={idx} onClick={() => handleSuggestions(elem)} className='flex gap-4 border-2 border-gray-50 active:border-black rounded-xl items-center my-2 justify-start'>
+            <h2 className='bg-[#eee] h-8 flex items-center justify-center w-12 rounded-full'><i className="ri-map-pin-fill"></i></h2>
+            <h4 className='font-medium'>{elem}</h4>
+          </div>
+        })
+      }
     </div>
+  
   );
 };
 

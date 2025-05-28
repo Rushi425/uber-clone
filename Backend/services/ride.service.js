@@ -30,12 +30,12 @@ async function getFare(pickup, destination){
         moto: 1.5,
     }
     const fare = {
-        auto: baseFare.auto + (perKmRate.auto *( distance.value/1000)) + (perMinuteRate.auto * (duration/60)),
-        car: baseFare.car + (perKmRate.car * ( distance.value/1000)) + (perMinuteRate.car * (duration/60)),
-        motorcycle: baseFare.motorcycle + (perKmRate.motorcycle * ( distance.value/1000)) + (perMinuteRate.motorcycle * (duration/60)),
+        auto: Math.round(baseFare.auto + (perKmRate.auto *( distance.value/1000)) + (perMinuteRate.auto * (duration/60))),
+        car: Math.round(baseFare.car + (perKmRate.car * ( distance.value/1000)) + (perMinuteRate.car * (duration/60))),
+        motorcycle: Math.round(baseFare.motorcycle + (perKmRate.motorcycle * ( distance.value/1000)) + (perMinuteRate.motorcycle * (duration/60))),
     };
 }
-
+module.exports.getFare = getFare;
 function getOtp(num){
     function generateOtp() {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();

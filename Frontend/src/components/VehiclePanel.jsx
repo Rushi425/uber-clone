@@ -18,7 +18,7 @@ export default function VehiclePanel( props ) {
           <h5 className="text-gray-500 text-xs font-medium">2 mins away</h5>
           <p>Affordable, compact rides</p>
         </div>
-        <h2 className="text-lg font-semibold">Rs.193.20</h2>
+        <h2 className="text-lg font-semibold">Rs.{props.fare.car}</h2>
       </div>
       <div onClick={() => {
         props.setConfirmRidePanel(true);
@@ -31,7 +31,9 @@ export default function VehiclePanel( props ) {
           <h5 className="text-gray-500 text-xs font-medium">3 mins away</h5>
           <p>Affordable, motorCycle rides</p>
         </div>
-        <h2 className="text-lg font-semibold">Rs.65.60</h2>
+        <h2 className="text-lg font-semibold">
+          Rs.{props.fare.motorcycle}
+        </h2>
       </div>
       <div onClick={() => {
         props.setConfirmRidePanel(true);
@@ -44,7 +46,9 @@ export default function VehiclePanel( props ) {
           <h5 className="text-gray-500 text-xs font-medium">3 mins away</h5>
           <p>Affordable, motorCycle rides</p>
         </div>
-        <h2 className="text-lg font-semibold">Rs.65.60</h2>
+        <h2 className="text-lg font-semibold">
+          Rs.{props.fare.auto}
+        </h2>–––
       </div>
     </div>
   )

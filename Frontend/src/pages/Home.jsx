@@ -7,6 +7,8 @@ import VehiclePanel from '../components/vehiclePanel'
 import ConfirmedRide from '../components/ConfirmedRide'
 import { LookingForDriver } from '../components/LookingForDriver'
 import WaitingForDriver from '../components/WaitingForDriver'
+import axios from 'axios'
+
 
 function Home() {
   const [pickup, setPickup] = useState('')
@@ -22,9 +24,57 @@ function Home() {
   const [confirmRidePanel, setConfirmRidePanel] = useState(false)
   const [vehicleFound, setVehicleFound] = useState(false)
   const [waitingForDriver, setWaitingForDriver] = useState(false)
+  const [activeField, setActiveField] = useState('pickup')
+  const [pickupSuggestions, setPickupSuggestions] = useState([])
+  const [destinationSuggestions, setDestinationSuggestions] = useState([])
+  const [fare, setFare] = useState(0)
 
+  const handlePickupChange = async(e) => {
+    setPickup(e.target.value)
+      try {
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,{
+        params: { input: e.target.value},
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      setPickupSuggestions(response.data.suggestions)
+    }
+  catch (error) {
+      console.error('Error fetching pickup suggestions:', error)
+    }
+  }
+  const handleDestinationChange = async(e) => {
+    setDestination(e.target.value)
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`, {
+        params: { input: e.target.value },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      setDestinationSuggestions(response.data.suggestions)
+    }
+  catch (error) {
+      console.error('Error fetching destination suggestions:', error)
+    }
+  }
   const submitHandler = (e) => {
-    e.preventDefault()
+      e.preventDefault()
+  }
+  async function findTrip(){
+    if (pickup && destination) {
+      setPanelOpen(false)
+      setVehiclePanel(true)
+    } else {
+      alert('Please enter both pickup and destination locations.')
+    }
+    const response = await axios.get('${import.meta.env.VITE_BASE_URL}/ride/get-fare', {
+      params: { pickup, destination },
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
   }
 
   useGSAP(() => {
@@ -92,38 +142,66 @@ function Home() {
             <i className="ri-arrow-down-wide-line"></i>
           </h5>
           <h4 className="text-2xl font-semibold">Find a Trip</h4>
-          <form onSubmit={submitHandler}>
-            <div className="line absolute h-16 w-1 top-[40%] left-10 bg-gray-900 rounded-full"></div>
+          <form onSubmit={(e) => {
+            submitHandler(e)
+          }}>
+            <div className="line absolute h-15 w-1 top-[40%] left-10 bg-gray-900 rounded-full"></div>
             <input
-              onClick={() => setPanelOpen(true)}
+              onClick={() =>{
+                setPanelOpen(true)
+                setActiveField('pickup')
+              }
+              }
               value={pickup}
-              onChange={(e) => setPickup(e.target.value)}
+              onChange={
+                (e) => handlePickupChange(e)
+              }
               className="bg-[#eee] px-12 py-2 text-base rounded-lg w-full mt-3"
               type="text"
               placeholder="Add a Pick-up Location"
             />
 
             <input
-              onClick={() => setPanelOpen(true)}
+              onClick={() => {
+                setPanelOpen(true)
+                setActiveField('destination')
+              }}
               value={destination}
-              onChange={(e) => setDestination(e.target.value)}
+              onChange={(e) => handleDestinationChange(e)}
               className="bg-[#eee] px-12 py-2 text-base rounded-lg w-full mt-3"
               type="text"
               placeholder="Enter Your Destination"
             />
           </form>
+          <button
+            onClick={findTrip}
+            className ='bg-black text-white px-4 py-2 rounded-lg mt-3 w-full'>
+            Find Trip
+          </button>
         </div>
         <div ref={panelRef} className="opacity-0 bg-white h-0">
-          <LocationSearchPanel setPanelOpen={setPanelOpen} setVehiclePanel={setVehiclePanel} />
+          <LocationSearchPanel 
+            suggestions={activeField === 'pickup' ? pickupSuggestions : destinationSuggestions}
+            setPanelOpen={setPanelOpen}
+            setVehiclePanel={setVehiclePanel}
+            setPickup={setPickup}
+            setDestination={setDestination}
+            activeField={activeField}
+          />
         </div>
       </div>
 
       <div ref={vehiclePanelRef} className="fixed w-full z-10 bottom-0 translate-y-full p-3 py-10 px-3 bg-white">
-        <VehiclePanel setConfirmRidePanel={setConfirmRidePanel} setVehiclePanel={setVehiclePanel}/>
+        <VehiclePanel fare={fare} setConfirmRidePanel={setConfirmRidePanel} setVehiclePanel={setVehiclePanel}/>
       </div>
 
       <div ref={confirmRidePanelRef} className="fixed w-full z-10 bottom-0 translate-y-full p-3 py-10 px-3 bg-white">
-        <ConfirmedRide setConfirmRidePanel={setConfirmRidePanel} setVehicleFound={setVehicleFound}/>
+        <ConfirmedRide 
+          setConfirmRidePanel={setConfirmRidePanel} 
+          setVehicleFound={setVehicleFound}
+          pickup={pickup}
+          destination={destination}
+        />
       </div>
 
       <div  ref={vehicleFoundRef} className="fixed w-full z-10 bottom-0 translate-y-full p-3 py-10 px-3 bg-white">
