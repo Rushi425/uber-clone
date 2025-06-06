@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import { gsap } from 'gsap'
 import 'remixicon/fonts/remixicon.css'
@@ -8,8 +8,8 @@ import ConfirmedRide from '../components/ConfirmedRide'
 import { LookingForDriver } from '../components/LookingForDriver'
 import WaitingForDriver from '../components/WaitingForDriver'
 import axios from 'axios'
-
-
+import { SocketContext } from '../context/SocketContext'
+import { UserDataContext } from '../context/UserContext';
 function Home() {
   const [pickup, setPickup] = useState('')
   const [destination, setDestination] = useState('')
@@ -28,6 +28,18 @@ function Home() {
   const [pickupSuggestions, setPickupSuggestions] = useState([])
   const [destinationSuggestions, setDestinationSuggestions] = useState([])
   const [fare, setFare] = useState(0)
+  const [ vehicleType, setVehicleType ] = useState(null)
+
+
+  const {socket} = useContext(SocketContext)
+  const { user } = useContext(UserDataContext)
+  
+  useEffect(() => {
+  if (user?.userId) {
+    socket.emit('join', { userType: 'user', userId: user.userId });
+  }
+}, [user]);
+
 
   const handlePickupChange = async(e) => {
     setPickup(e.target.value)
@@ -69,12 +81,25 @@ function Home() {
     } else {
       alert('Please enter both pickup and destination locations.')
     }
-    const response = await axios.get('${import.meta.env.VITE_BASE_URL}/ride/get-fare', {
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/ride/get-fare`, {
       params: { pickup, destination },
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     })
+  }
+  async function createRide() {
+        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/ride/create`, {
+            pickup,
+            destination,
+            vehicleType
+        }, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+
+
   }
 
   useGSAP(() => {
@@ -125,7 +150,7 @@ function Home() {
 
   return (
     <div className="h-screen relative overflow-hidden">
-      <img className="w-16 absolute left-5 top-5" src="" alt="" />
+      <img className="w-16 absolute left-5 top-5" src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="" />
       <div className="h-screen w-screen">
         <img className="h-full w-full obj" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjj8P47W62yWuQCyBWQknptGadrlz0pWvOJg&s" alt="map img" />
       </div>
@@ -191,26 +216,60 @@ function Home() {
         </div>
       </div>
 
-      <div ref={vehiclePanelRef} className="fixed w-full z-10 bottom-0 translate-y-full p-3 py-10 px-3 bg-white">
-        <VehiclePanel fare={fare} setConfirmRidePanel={setConfirmRidePanel} setVehiclePanel={setVehiclePanel}/>
-      </div>
-
-      <div ref={confirmRidePanelRef} className="fixed w-full z-10 bottom-0 translate-y-full p-3 py-10 px-3 bg-white">
-        <ConfirmedRide 
-          setConfirmRidePanel={setConfirmRidePanel} 
-          setVehicleFound={setVehicleFound}
-          pickup={pickup}
-          destination={destination}
+      <div
+        ref={vehiclePanelRef}
+        className="fixed bottom-0 left-0 w-full h-[50%] bg-white z-50 translate-y-full transition-transform duration-300 ease-in-out"
+      >
+        <VehiclePanel
+          selectVehicle={setVehicleType}
+          fare={fare}
+          setConfirmRidePanel={setConfirmRidePanel}
+          setVehiclePanel={setVehiclePanel}
         />
       </div>
 
-      <div  ref={vehicleFoundRef} className="fixed w-full z-10 bottom-0 translate-y-full p-3 py-10 px-3 bg-white">
-        <LookingForDriver setVehicleFound={setVehicleFound} />
+
+
+     <div
+        ref={confirmRidePanelRef}
+        className="fixed bottom-0 left-0 w-full h-[50%] bg-white z-50 translate-y-full transition-transform duration-300 ease-in-out"
+      >
+        <ConfirmedRide
+          createRide={createRide}
+          setConfirmRidePanel={setConfirmRidePanel}
+          setVehicleFound={setVehicleFound}
+          pickup={pickup}
+          destination={destination}
+          fare={fare}
+          vehicleType={vehicleType}
+        />
       </div>
 
-      <div ref={waitingForDriverRef}  className="fixed w-full z-10 bottom-0  p-3 py-10 px-3 bg-white">
+
+      <div
+        ref={vehicleFoundRef}
+        className="fixed bottom-0 left-0 w-full h-[50%] bg-white z-50 translate-y-full transition-transform duration-300 ease-in-out"
+      >
+        <LookingForDriver
+          createRide={createRide}
+          setVehicleFound={setVehicleFound}
+          pickup={pickup}
+          destination={destination}
+          fare={fare}
+          vehicleType={vehicleType}
+        />
+      </div>
+
+
+
+      <div
+        ref={waitingForDriverRef}
+        className="fixed bottom-0 left-0 w-full h-[50%] bg-white z-50 translate-y-full transition-transform duration-300 ease-in-out"
+      >
         <WaitingForDriver waitingForDriver={waitingForDriver} />
       </div>
+
+
     </div>
   )
 }

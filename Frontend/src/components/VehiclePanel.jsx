@@ -9,6 +9,7 @@ export default function VehiclePanel( props ) {
       <h2 className="text-2xl font-semibold mb-5">Choose a Vehicle</h2>
       <div onClick={() => {
         props.setConfirmRidePanel(true);
+        props.setVehicleType('car');
       }} className="flex w-full border-2 mb-2 rounded-xl p-3 items-center justify-between">
         <img className="h-5" src={' ' || null} alt="" />
         <div className="w-1/2">
@@ -22,6 +23,7 @@ export default function VehiclePanel( props ) {
       </div>
       <div onClick={() => {
         props.setConfirmRidePanel(true);
+        props.setVehicleType('motorcycle');
       }} className="flex w-full border-2 mb-2 rounded-xl p-3 items-center justify-between">
         <img className="h-10" src={' ' || null} alt="" />
         <div className="w-1/2">
@@ -37,6 +39,7 @@ export default function VehiclePanel( props ) {
       </div>
       <div onClick={() => {
         props.setConfirmRidePanel(true);
+        props.setVehicleType('auto');
       }} className="flex w-full border-2 mb-2 rounded-xl p-3 items-center justify-between">
         <img className="h-10" src={' ' || null} alt="" />
         <div className="w-1/2">
@@ -48,7 +51,7 @@ export default function VehiclePanel( props ) {
         </div>
         <h2 className="text-lg font-semibold">
           Rs.{props.fare.auto}
-        </h2>–––
+        </h2>
       </div>
     </div>
   )
