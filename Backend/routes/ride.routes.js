@@ -21,4 +21,18 @@ router.get(
     rideController.getFare
 )
 
+router.post(
+    '/confirm',
+    authMiddleware.authCaptain,
+    body('rideId').isMongoId().withMessage("Ride ID is required"),
+    rideController.confirmRide
+)
+
+router.get(
+    '/start-ride',
+    authMiddleware.authCaptain,
+    query('rideId').isMongoId().withMessage("Ride ID is required"),
+    query('otp').isString().withMessage("OTP is required"),
+    rideController.startRide
+)
 module.exports = router;

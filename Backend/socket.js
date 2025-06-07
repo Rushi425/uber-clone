@@ -5,7 +5,7 @@ let io;
 function initializeSocket(server) {
   io = new Server(server, {
     cors: {
-      origin: '*', // or specify frontend URL like http://localhost:5173
+      origin: '*', 
       methods: ['GET', 'POST'],
     }
   });
@@ -22,6 +22,23 @@ function initializeSocket(server) {
       }
     });
 
+    socket.on('update-location-captain', async (data) =>{
+      const { captainId, location } = data;
+      if( !captainId || !location.ltd || !location.lng){
+        console.error('Invalid data received for update-location-captain:', data);
+        return;
+      }
+      try {
+        await captainModel.findByIdAndUpdate(captainId, { location:{
+          ltd: location.ltd,
+          lng: location.lng
+      }});
+      } catch (error) {
+        console.error(error);
+      }
+      }
+    );
+
     socket.on('disconnect', () => {
       console.log(`Client disconnected: ${socket.id}`);
     });
@@ -29,11 +46,10 @@ function initializeSocket(server) {
 }
 
 
-function sendMessageToSocket(messageObject){
-    console.log(messageObject);
+function sendMessageToSocket(socketId, messageObject){
 
     if(io){
-        io.to(messageObject.socketId).emit(messageObject.event, messageObject.data);
+        io.to(socketId).emit(messageObject.event, messageObject.data);
     }
     else{
         console.error('Socket.io is not initialized.');

@@ -10,6 +10,7 @@ import WaitingForDriver from '../components/WaitingForDriver'
 import axios from 'axios'
 import { SocketContext } from '../context/SocketContext'
 import { UserDataContext } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom'
 function Home() {
   const [pickup, setPickup] = useState('')
   const [destination, setDestination] = useState('')
@@ -29,7 +30,9 @@ function Home() {
   const [destinationSuggestions, setDestinationSuggestions] = useState([])
   const [fare, setFare] = useState(0)
   const [ vehicleType, setVehicleType ] = useState(null)
+  const [ride, setRide] = useState(null)
 
+  const navigate = useNavigate()
 
   const {socket} = useContext(SocketContext)
   const { user } = useContext(UserDataContext)
@@ -39,7 +42,19 @@ function Home() {
     socket.emit('join', { userType: 'user', userId: user.userId });
   }
 }, [user]);
+ 
+ socket.on('ride-confirmed', (ride) => {
+  setWaitingForDriver(true);
+  setVehicleFound(false);
+  setRide(ride);
+ });
 
+ socket.on('ride-started', (ride) => {
+  setWaitingForDriver(false);
+  setVehicleFound(true);
+  setConfirmRidePanel(false);
+  navigate('/riding', { state: { ride } });
+  });
 
   const handlePickupChange = async(e) => {
     setPickup(e.target.value)
@@ -241,8 +256,7 @@ function Home() {
           pickup={pickup}
           destination={destination}
           fare={fare}
-          vehicleType={vehicleType}
-        />
+          vehicleType={vehicleType}        />
       </div>
 
 
@@ -266,7 +280,11 @@ function Home() {
         ref={waitingForDriverRef}
         className="fixed bottom-0 left-0 w-full h-[50%] bg-white z-50 translate-y-full transition-transform duration-300 ease-in-out"
       >
-        <WaitingForDriver waitingForDriver={waitingForDriver} />
+        <WaitingForDriver
+        ride={ride}
+        setVehicleFound={setVehicleFound}
+        setWaitingForDriver={setWaitingForDriver}
+        waitingForDriver={waitingForDriver} />
       </div>
 
 
