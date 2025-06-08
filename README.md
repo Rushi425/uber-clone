@@ -34,7 +34,7 @@ This is a full-stack Uber clone application built with Node.js, Express, MongoDB
 *   **Vite**: Next-generation frontend tooling.
 *   **Context API**: For state management in React.
 
-## Getting Started
+
 
 Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
