@@ -7,7 +7,7 @@
 
 #### POST /users/register
 
-##### Description
+#### Description
 Registers a new user in the system.
 
 ##### Request Body
