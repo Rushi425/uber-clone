@@ -64,7 +64,7 @@ module.exports.createRide = async ({
 
 }
 
-module.exports.confirmRide = async (rideId, captain) =>{
+module.exports.confirmRide = async ({rideId, captain}) =>{
     if (!rideId) {
         throw new Error('Ride ID is required to confirm a ride');
     }
@@ -81,7 +81,7 @@ module.exports.confirmRide = async (rideId, captain) =>{
     
 }
 
-module.exports.startRide = async (rideId, otp, captain) => {
+module.exports.startRide = async ({rideId, otp, captain}) => {
     if (!rideId || !otp) {
         throw new Error('Ride ID and OTP are required to start a ride');
     }
@@ -115,6 +115,32 @@ module.exports.startRide = async (rideId, otp, captain) => {
 
 }
 
-
-
-
+module.exports.endRide = async ({rideId, captain}) => {
+    if (!rideId) {
+        throw new Error('Ride ID is required to end a ride');
+    }
+    
+    const ride = await rideModel.findOne({
+        _id: rideId,
+        captain: captain._id
+    }).populate('user').populate('captain').select('+otp');
+    
+    if (!ride) {
+        throw new Error('Ride not found');
+    }
+    if (ride.status !== 'ongoing') {
+        throw new Error('Ride is not in ongoing status');
+    }
+    await rideModel.findOneAndUpdate(
+        { _id: rideId },
+        {
+            status: 'completed',
+            endTime: new Date(),
+        }
+    );
+    sendMessageToSocketId(ride.user.socketId, {
+        event: 'ride-completed',
+        data: ride
+    });
+    return ride;
+}

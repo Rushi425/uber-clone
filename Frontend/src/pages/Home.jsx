@@ -3,7 +3,7 @@ import { useGSAP } from '@gsap/react'
 import { gsap } from 'gsap'
 import 'remixicon/fonts/remixicon.css'
 import LocationSearchPanel from '../components/LocationSearchPanel'
-import VehiclePanel from '../components/vehiclePanel'
+import VehiclePanel from '../components/VehiclePanel'
 import ConfirmedRide from '../components/ConfirmedRide'
 import { LookingForDriver } from '../components/LookingForDriver'
 import WaitingForDriver from '../components/WaitingForDriver'
@@ -11,6 +11,7 @@ import axios from 'axios'
 import { SocketContext } from '../context/SocketContext'
 import { UserDataContext } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom'
+import LiveTracking from '../components/LiveTracking'
 function Home() {
   const [pickup, setPickup] = useState('')
   const [destination, setDestination] = useState('')
@@ -167,7 +168,7 @@ function Home() {
     <div className="h-screen relative overflow-hidden">
       <img className="w-16 absolute left-5 top-5" src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="" />
       <div className="h-screen w-screen">
-        <img className="h-full w-full obj" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjj8P47W62yWuQCyBWQknptGadrlz0pWvOJg&s" alt="map img" />
+      <LiveTracking/>
       </div>
 
       <div className="flex flex-col justify-end h-screen absolute top-0 w-full">

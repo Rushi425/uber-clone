@@ -35,4 +35,10 @@ router.get(
     query('otp').isString().withMessage("OTP is required"),
     rideController.startRide
 )
+
+router.post(
+    '/end-ride',
+    body('rideId').isMongoId().withMessage("Ride ID is required"),
+    rideController.endRide
+    )
 module.exports = router;

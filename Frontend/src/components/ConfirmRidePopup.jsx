@@ -23,8 +23,7 @@ const ConfirmRidePopup = (props) => {
                 props.setConfirmRidePopupPanel(false);
                 props.setridePopupPanel(false);
                 props.setRide(null);
-                navigate('/captain-riding')  
-
+                navigate('/captain-riding',{state:{ride:props.ride}})  
             }
         }
         catch (error) {
